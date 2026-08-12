@@ -74,6 +74,14 @@ class RepoDoctorTests(unittest.TestCase):
         with redirect_stdout(io.StringIO()):
             self.assertEqual(main([str(self.tmp), "--fail-under", "101"]), 1)
 
+    def test_release_tags(self):
+        from repo_doctor.checks import check_release_tags
+        self.assertEqual(check_release_tags(self.tmp).severity, "warn")
+        git(self.tmp, "tag", "-a", "v0.1.0", "-m", "first release")
+        finding = check_release_tags(self.tmp)
+        self.assertEqual(finding.severity, "ok")
+        self.assertIn("v0.1.0", finding.message)
+
     def test_render_text_contains_score(self):
         self.assertIn("Health score", render_text(run_checks(self.tmp)))
 

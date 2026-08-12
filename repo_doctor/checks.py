@@ -185,6 +185,23 @@ def check_recent_activity(repo: Path) -> Finding:
     return Finding("activity", "ok", f"Last commit {int(age_days)} day(s) ago.")
 
 
+def check_release_tags(repo: Path) -> Finding:
+    tags = _git(repo, "tag", "--list")
+    if tags is None:
+        return Finding("release-tags", "warn", "Could not list tags (git unavailable?).")
+    if not tags:
+        return Finding("release-tags", "warn", "No release tags found.",
+                       hint="Tag a release: git tag -a v0.1.0 -m 'first release' && git push --tags. "
+                            "Tags make versions installable and changelog-able.")
+    versioned = [t for t in tags.splitlines() if re.match(r"^v?\d+\.\d+", t)]
+    if not versioned:
+        return Finding("release-tags", "warn",
+                       f"{len(tags)} tag(s) exist but none look like a version (e.g. v1.2.0).",
+                       hint="Use semantic-version tags so users can pin releases.")
+    return Finding("release-tags", "ok",
+                   f"{len(versioned)} version tag(s) found, latest listed: {versioned[-1]}.")
+
+
 ALL_CHECKS = (
     check_is_git_repo,
     check_required_files,
@@ -193,6 +210,7 @@ ALL_CHECKS = (
     check_large_files,
     check_secret_patterns,
     check_recent_activity,
+    check_release_tags,
 )
 
 

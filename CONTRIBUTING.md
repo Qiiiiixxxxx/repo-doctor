@@ -17,6 +17,5 @@ Thanks for helping improve repo-doctor!
 ## Ideas for new checks
 
 - Detect merge-commit-only history vs. squash/rebase conventions
-- Flag repos with no tagged release
 - Warn on default branch not named `main`/`master`
 - Detect vendored dependency directories committed to git
