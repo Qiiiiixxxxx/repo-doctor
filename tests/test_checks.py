@@ -82,6 +82,14 @@ class RepoDoctorTests(unittest.TestCase):
         self.assertEqual(finding.severity, "ok")
         self.assertIn("v0.1.0", finding.message)
 
+    def test_default_branch(self):
+        from repo_doctor.checks import check_default_branch
+        finding = check_default_branch(self.tmp)
+        self.assertIn(finding.severity, ("ok", "warn"))
+        git(self.tmp, "branch", "-m", "trunk")
+        self.assertEqual(check_default_branch(self.tmp).severity, "warn")
+        self.assertIn("trunk", check_default_branch(self.tmp).message)
+
     def test_render_text_contains_score(self):
         self.assertIn("Health score", render_text(run_checks(self.tmp)))
 

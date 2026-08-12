@@ -202,6 +202,20 @@ def check_release_tags(repo: Path) -> Finding:
                    f"{len(versioned)} version tag(s) found, latest listed: {versioned[-1]}.")
 
 
+def check_default_branch(repo: Path) -> Finding:
+    branch = _git(repo, "branch", "--show-current")
+    if branch is None:
+        return Finding("default-branch", "warn", "Could not determine current branch.")
+    if not branch:
+        return Finding("default-branch", "warn", "Repository is in detached HEAD state.")
+    if branch in {"main", "master"}:
+        return Finding("default-branch", "ok", f"Default branch is '{branch}'.")
+    return Finding("default-branch", "warn",
+                   f"Default branch is '{branch}', not 'main' or 'master'.",
+                   hint="Unusual default-branch names confuse contributors and some CI tooling; "
+                        "rename with: git branch -m <old> main.")
+
+
 ALL_CHECKS = (
     check_is_git_repo,
     check_required_files,
@@ -211,6 +225,7 @@ ALL_CHECKS = (
     check_secret_patterns,
     check_recent_activity,
     check_release_tags,
+    check_default_branch,
 )
 
 

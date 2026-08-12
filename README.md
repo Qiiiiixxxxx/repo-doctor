@@ -60,6 +60,7 @@ repo-doctor --fail-under 80 # exit 1 below score 80 — use as a CI gate
 | `secrets` | Private keys, AWS keys, or token assignments in tracked files |
 | `activity` | No commits in 180+ days |
 | `release-tags` | No semantic-version tags (e.g. `v1.2.0`) for users to pin |
+| `default-branch` | Default branch is neither `main` nor `master` |
 
 Score starts at 100; each FAIL costs 20, each WARN costs 7. Grades: A ≥ 90, B ≥ 75, C ≥ 60, D ≥ 40, F below.
 
